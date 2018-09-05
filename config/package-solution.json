@@ -1,0 +1,12 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "test-web-part-client-side-solution",
+    "id": "c6404e99-b691-414c-9f19-d2a6e4db19df",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true
+  },
+  "paths": {
+    "zippedPackage": "solution/test-web-part.sppkg"
+  }
+}
