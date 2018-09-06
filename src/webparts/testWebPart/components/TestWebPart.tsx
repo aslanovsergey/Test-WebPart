@@ -5,7 +5,7 @@ import { escape, keys } from '@microsoft/sp-lodash-subset';
 import { CommandBar, ICommandBarProps, ICommandBarItemProps } from 'office-ui-fabric-react/lib/CommandBar';
 import { Pivot, PivotItem, DetailsList, IColumn, DetailsRow, IDetailsRowProps, IDetailsRowCheckProps, SelectionMode, IObjectWithKey, Selection, DatePicker, IDatePickerStrings, Dropdown, IDropdown, IDatePicker, TextField } from 'office-ui-fabric-react';
 import { ITestWebPartState } from './ITestWebPartState';
-import { sp, ItemVersion } from "@pnp/sp";
+import { sp, ItemVersion, AttachmentFileInfo } from "@pnp/sp";
 import { Dialog } from '@microsoft/sp-dialog';
 import { DeleteCofrimationDialog } from './deleteCofrimationDialog';
 import { PeoplePicker } from "@pnp/spfx-controls-react/lib/PeoplePicker";
@@ -61,13 +61,42 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
   private title;
   public assistant;
 
-  private getListItems = (): Promise<void> => {
+  private getListItems = (): Promise<any[]> => {
     return sp.web.lists.getByTitle("Test WebPart List").items.select("ID", "Title", "Date", "Meeting_x0020_room", "Assistant/Id", "Assistant/Title", "Assistant/EMail").expand("Assistant").get().then(response => {
       console.log(response);
-      this.setState({
-        items: response.map(item => ({ id: item.ID, title: item.Title, date: new Date(item.Date), room: item.Meeting_x0020_room, assistant: item.Assistant }))
-      })
+      return response.map(item => ({ id: item.ID, title: item.Title, date: new Date(item.Date), room: item.Meeting_x0020_room, assistant: item.Assistant }))
     })
+  }
+
+  private getListItemsAndSetState = (): Promise<any[]> => {
+    return this.getListItems()
+      .then(items => {
+        this.setState({
+          items
+        })
+        return items;
+      })
+  }
+
+  private getAttachments = (items: any[]) => {
+    let batch = sp.createBatch();
+
+    items.forEach(item =>
+      sp.web.lists.getByTitle("Test WebPart List").items.getById(item.id).inBatch(batch).attachmentFiles.get().then(r => {
+        console.log(r);
+        let newItems = this.state.items.map(newItem => {
+          if (newItem.id === item.id) {
+            newItem.attachments = [];
+            r.forEach(attachment => item.attachments.push(attachment.FileName))
+          }
+          return newItem
+        });
+        this.setState({
+          items: newItems
+        })
+      }))
+
+    batch.execute().then(() => console.log("All done!"));
   }
 
   componentWillMount() {
@@ -81,7 +110,8 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
       })
     });
 
-    this.getListItems();
+    this.getListItemsAndSetState()
+      .then(items => this.getAttachments(items))
   }
 
 
@@ -210,6 +240,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
   });
 
   private _renderItemColumn = (item: any, index: number, column: IColumn) => {
+    console.log("_renderItemColumn")
     const fieldContent = item[column.fieldName || ''];
 
     switch (column.key) {
@@ -287,10 +318,52 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
             <span>{fieldContent.Title}</span>
           );
         }
+      case "attachments":
+        if (this.state.editMode && index === this.state.selectedItems[0]) {
+          return (
+            <div>
+              {fieldContent.map(attachmentName => <div>{attachmentName}</div>)}
+              <input type="file" id="uploadFiles" multiple /><br></br>
+              <input type="button" value="Upload" onClick={this.UploadFiles} />
+            </div>
+          );
+        } else {
+
+          return (
+            fieldContent.map(attachmentName => <div>{attachmentName}</div>)
+          );
+        }
 
       default:
         return <span>{fieldContent}</span>;
     }
+  }
+
+  private UploadFiles = (e): boolean => {
+    e.preventDefault();
+    var uplodFiles = (document.getElementById('uploadFiles') as HTMLInputElement);
+    var files = uplodFiles.files;
+
+    if (files.length > 0) {
+
+      var fileInfos: AttachmentFileInfo[] = [];
+      for (var i = 0; i < files.length; i++) {
+        let file = files[i];
+
+        fileInfos.push({
+          name: file.name,
+          content: file
+        });
+      }
+
+      sp.web.lists.getByTitle("Test WebPart List").items.getById(this.state.items[this.state.selectedItems[0]].id).attachmentFiles.addMultiple(fileInfos).then((result) => {
+        console.log(result);
+        this.getAttachments([this.state.items[this.state.selectedItems[0]]]);
+        uplodFiles.value = null;
+      })
+    }
+
+    return false;
   }
 
   private _onRenderRow = (props: IDetailsRowProps): JSX.Element => {
@@ -367,7 +440,10 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
       key: 'refresh',
       name: 'Refresh', //in later versions is replaced to text
       iconProps: { iconName: 'Refresh' },
-      onClick: () => { this.getListItems() },
+      onClick: () => {
+        this.getListItemsAndSetState()
+          .then(items => this.getAttachments(items))
+      },
       disabled: false,
       iconOnly: false
     })
@@ -382,8 +458,8 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
       }
     ).then(response => {
       console.log(response);
-      return this.getListItems();
-    });
+      return this.getListItemsAndSetState();
+    }).then(items => this.getAttachments(items));
   }
 
   private onDelete = () => {
@@ -396,7 +472,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
       () => sp.web.lists.getByTitle("Test WebPart List").items.getById(this.state.items[this.state.selectedItems[0]].id).delete()
         .then(response => {
           console.log(response);
-          this.getListItems();
+          this.getListItemsAndSetState();
         })
     );
     dialog.show();
@@ -428,7 +504,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
         body
       ).then(response => {
         console.log(response);
-        return this.getListItems();
+        return this.getListItemsAndSetState();
       }).then(() =>
         this.setState({ editMode: false })
       )
