@@ -4,7 +4,23 @@
     "name": "test-web-part-client-side-solution",
     "id": "c6404e99-b691-414c-9f19-d2a6e4db19df",
     "version": "1.0.0.0",
-    "includeClientSideAssets": true
+    "includeClientSideAssets": true,
+   "features": [{
+     "title": "test-web-part-client-side-solution",
+     "description": "test-web-part-client-side-solution",
+     "id": "a1a01c94-bc2a-4f69-b01d-fd60ad2bde0b",
+     "version": "1.0.0.0",
+     "assets": {
+       "elementManifests": [
+         "elements.xml",
+         "elements-v2.xml",
+         "elements-v3.xml"
+       ],
+       "elementFiles":[
+        "schema.xml"
+      ]
+     }
+   }]
   },
   "paths": {
     "zippedPackage": "solution/test-web-part.sppkg"

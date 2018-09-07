@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+
+    <ContentType ID="0x0100F9051C5319E94524B12B987F1DA401BF"
+        Name="Test WebPart List Content Type"
+        Group="Test WebPart Content Types"
+        Description="Test WebPart Content Types">
+        <FieldRefs>
+            <FieldRef ID="{5731c750-d2f3-43c8-8c38-1d07cf074ab5}" />
+            <FieldRef ID="{5c79120f-f1cc-42bd-a50d-87d388b9abfe}" />
+            <FieldRef ID="{92953ecf-ed88-4f45-b2e3-42088b6146ea}" />
+        </FieldRefs>
+    </ContentType>
+
+</Elements>

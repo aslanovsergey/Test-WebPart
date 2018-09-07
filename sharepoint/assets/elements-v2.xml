@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+
+<Field ID="{5731c750-d2f3-43c8-8c38-1d07cf074ab5}"
+        Name="MeetingDate"
+        DisplayName="Meeting Date"
+        Required="FALSE"
+        Type="DateTime"
+        Format="DateTime"
+        Group="Test WebPart Columns"/>
+
+    <Field ID="{5c79120f-f1cc-42bd-a50d-87d388b9abfe}"
+        Name="MeetingRoom"
+        DisplayName="MeetingRoom"
+        Type="Choice"
+        Required="FALSE"
+        Group="Test WebPart Columns">
+        <CHOICES>
+            <CHOICE>Tallinn</CHOICE>
+            <CHOICE>Berlin</CHOICE>
+            <CHOICE>London</CHOICE>
+        </CHOICES>
+    </Field>
+
+    <Field ID="{92953ecf-ed88-4f45-b2e3-42088b6146ea}"
+        Name="Assistant"
+        DisplayName="Assistant"
+        Required="FALSE"
+        Type="User"
+        UserSelectionMode="0"
+        UserSelectionScope="0"
+        Group="Test WebPart Columns"/>
+
+</Elements>
+
+    

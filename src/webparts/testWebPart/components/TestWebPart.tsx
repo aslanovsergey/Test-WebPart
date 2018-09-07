@@ -62,9 +62,9 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
   public assistant;
 
   private getListItems = (): Promise<any[]> => {
-    return sp.web.lists.getByTitle("Test WebPart List").items.select("ID", "Title", "Date", "Meeting_x0020_room", "Assistant/Id", "Assistant/Title", "Assistant/EMail").expand("Assistant").get().then(response => {
+    return sp.web.lists.getByTitle("Test WebPart List").items.select("ID", "Title", "MeetingDate", "Meeting_x0020_room", "Assistant/Id", "Assistant/Title", "Assistant/EMail").expand("Assistant").get().then(response => {
       console.log(response);
-      return response.map(item => ({ id: item.ID, title: item.Title, date: new Date(item.Date), room: item.Meeting_x0020_room, assistant: item.Assistant }))
+      return response.map(item => ({ id: item.ID, title: item.Title, MeetingDate: new Date(item.MeetingDate), room: item.Meeting_x0020_room, assistant: item.Assistant, attachments: [] }))
     })
   }
 
@@ -126,7 +126,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
           <Pivot
             onLinkClick={this.onPivotLinkClick}
           >
-            <PivotItem linkText="Dates">
+            <PivotItem linkText="Meeting date">
               <DetailsList
                 items={this.state.items}
                 selectionMode={SelectionMode.single}
@@ -142,9 +142,9 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
                       isResizable: true
                     },
                     {
-                      key: 'date',
-                      name: 'Date',
-                      fieldName: 'date',
+                      key: 'MeetingDate',
+                      name: 'Meeting Date',
+                      fieldName: 'MeetingDate',
                       minWidth: 100,
                       maxWidth: 200
                     }
@@ -154,7 +154,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
                 onRenderRow={this._onRenderRow}
               />
             </PivotItem>
-            <PivotItem linkText="Options">
+            <PivotItem linkText="Meeting room">
               <DetailsList
                 items={this.state.items}
                 selectionMode={SelectionMode.single}
@@ -182,7 +182,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
                 onRenderRow={this._onRenderRow}
               />
             </PivotItem>
-            <PivotItem linkText="Users">
+            <PivotItem linkText="Assistant">
               <DetailsList
                 items={this.state.items}
                 selectionMode={SelectionMode.single}
@@ -224,7 +224,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
   }
 
   private onPivotLinkClick = (item: PivotItem, ev: React.MouseEvent<HTMLElement>) => {
-    if (item.props.linkText === "Dates") {
+    if (item.props.linkText === "Meeting date") {
 
     }
   }
@@ -257,7 +257,7 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
             <span>{fieldContent}</span>
           );
         }
-      case 'date':
+      case 'MeetingDate':
         if (this.state.editMode && index === this.state.selectedItems[0]) {
           return (
             <DatePicker
@@ -472,8 +472,8 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
       () => sp.web.lists.getByTitle("Test WebPart List").items.getById(this.state.items[this.state.selectedItems[0]].id).delete()
         .then(response => {
           console.log(response);
-          this.getListItemsAndSetState();
-        })
+          return this.getListItemsAndSetState();
+        }).then(items => this.getAttachments(items))
     );
     dialog.show();
   }
@@ -489,8 +489,8 @@ export default class TestWebPart extends React.Component<ITestWebPartProps, ITes
     if (this.title && this.state.items[this.state.selectedItems[0]].title !== this.title.state.value)
       body["Title"] = this.title.state.value;
 
-    if (this.datePicker && this.state.items[this.state.selectedItems[0]].date !== this.datePicker.state.selectedDate)
-      body["Date"] = this.datePicker.state.selectedDate;
+    if (this.datePicker && this.state.items[this.state.selectedItems[0]].MeetingDate !== this.datePicker.state.selectedDate)
+      body["MeetingDate"] = this.datePicker.state.selectedDate;
 
     if (this.dropDown && this.dropDown.state.selectedIndices[0] !== -1 && this.state.items[this.state.selectedItems[0]].room !== this.rooms[this.dropDown.state.selectedIndices[0]].text)
       body["Meeting_x0020_room"] = this.rooms[this.dropDown.state.selectedIndices[0]].text;
