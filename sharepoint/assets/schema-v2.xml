@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<List xmlns:ows="Microsoft SharePoint" Title="Basic List" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/Basic List" BaseType="0" xmlns="http://schemas.microsoft.com/sharepoint/">
+ <MetaData>
+   <ContentTypes>
+         <ContentType ID="0x0100b670ede1d00e409ca9c8978d2276626b"
+            Name="ListFieldsContentType">
+        <FieldRefs>
+            <FieldRef ID="{fa564e0f-0c70-4ab9-b863-0177e6ddd247}" Name="Title" />
+            <FieldRef ID="{266dd38e-21ef-4339-9970-78ade9e620e6}" />
+            <FieldRef ID="{796e7efb-df62-470e-b7c7-627a76247671}" />
+            <FieldRef ID="{b9d2bb22-41d4-4dcc-a277-f99e4b93c147}" />
+        </FieldRefs>
+    </ContentType>
+    <ContentTypeRef ID="0x01">
+        <Folder TargetName="Item" />
+      </ContentTypeRef><ContentTypeRef ID="0x0120" />
+   </ContentTypes>
+   <Fields>
+   <Field ID="{fa564e0f-0c70-4ab9-b863-0177e6ddd247}" Type="Text" Name="Title" DisplayName="$Resources:core,Title;" Required="TRUE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" />
+   <Field ID="{266dd38e-21ef-4339-9970-78ade9e620e6}"
+        Name="MeetingDate"
+        DisplayName="Meeting Date"
+        Required="FALSE"
+        Type="DateTime"
+        Format="DateTime"
+        Group="Test WebPart Columns"/>
+
+    <Field ID="{796e7efb-df62-470e-b7c7-627a76247671}"
+        Name="MeetingRoom"
+        DisplayName="Meeting Room"
+        Type="Choice"
+        Required="FALSE"
+        Group="Test WebPart Columns">
+        <CHOICES>
+            <CHOICE>Tallinn</CHOICE>
+            <CHOICE>Berlin</CHOICE>
+            <CHOICE>London</CHOICE>
+        </CHOICES>
+    </Field>
+
+    <Field ID="{b9d2bb22-41d4-4dcc-a277-f99e4b93c147}"
+        Name="Assistant"
+        DisplayName="Assistant"
+        Required="FALSE"
+        Type="User"
+        UserSelectionMode="0"
+        UserSelectionScope="0"
+        Group="Test WebPart Columns"/>
+   </Fields>
+   <Views>
+     <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+       <XslLink Default="TRUE">main.xsl</XslLink>
+       <JSLink>clienttemplates.js</JSLink>
+       <RowLimit Paged="TRUE">30</RowLimit>
+       <Toolbar Type="Standard" />
+       <ViewFields>
+         <FieldRef Name="LinkTitle"></FieldRef>
+         <FieldRef Name="MeetingDate"></FieldRef>
+         <FieldRef Name="MeetingRoom"></FieldRef>
+         <FieldRef Name="Assistant"></FieldRef>
+       </ViewFields>
+       <Query>
+         <OrderBy>
+           <FieldRef Name="ID" />
+         </OrderBy>
+       </Query>
+     </View>
+   </Views>
+   <Forms>
+     <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+     <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+     <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+   </Forms>
+ </MetaData>
+</List>

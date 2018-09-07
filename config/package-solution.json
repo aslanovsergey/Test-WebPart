@@ -12,12 +12,10 @@
      "version": "1.0.0.0",
      "assets": {
        "elementManifests": [
-         "elements.xml",
-         "elements-v2.xml",
-         "elements-v3.xml"
+         "elements-v5.xml"
        ],
        "elementFiles":[
-        "schema.xml"
+        "schema-v3.xml"
       ]
      }
    }]

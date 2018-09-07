@@ -11,7 +11,7 @@
 
     <Field ID="{5c79120f-f1cc-42bd-a50d-87d388b9abfe}"
         Name="MeetingRoom"
-        DisplayName="MeetingRoom"
+        DisplayName="Meeting Room"
         Type="Choice"
         Required="FALSE"
         Group="Test WebPart Columns">
